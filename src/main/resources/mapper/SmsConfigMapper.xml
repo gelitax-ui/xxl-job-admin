@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+		"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.xxl.job.admin.mapper.SmsConfigMapper">
+
+
+	<select id="querySmsConfigList" resultType="java.util.Map">
+		<!-- 		select * from sms_config t where t.is_close='1' and area_code=#{areaCode} order by sort asc -->
+		select * from sms_config limit 1;
+	</select>
+
+
+	<insert id="saveSmsRecord">
+		INSERT INTO sms_record (`phone`, `code`, `send_time`, `plateform`,status,name,plateform_id)
+		VALUES (#{phone}, #{remark}, now(), #{plateform},#{status},#{name},#{plateformId})
+	</insert>
+
+	<select id="queryLastOneHourSuccessCnt" resultType="int">
+		SELECT COUNT(*) FROM sms_record WHERE STATUS = '1' AND send_time &lt;= NOW() AND   send_time >=DATE_SUB(NOW(),INTERVAL 1 HOUR);
+	</select>
+
+	<!--	<update id="updateSmsConfig">
+            update sms_config t set t.success_cnt=t.success_cnt+#{successCnt},t.fail_cnt=t.fail_cnt+#{failCnt}
+            <if test="successCnt !=null and successCnt !=0"> ,use_cnt = use_cnt+1 </if>
+            where id =#{id}
+        </update>-->
+
+
+</mapper>

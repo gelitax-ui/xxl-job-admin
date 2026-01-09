@@ -34,6 +34,13 @@
 		ORDER BY t.app_name, t.title, t.id ASC
 	</select>
 
+	<select id="findByAppName" parameterType="java.lang.String" resultMap="XxlJobGroup">
+		SELECT <include refid="Base_Column_List" />
+		FROM xxl_job_group AS t
+		WHERE t.app_name = #{appName}
+		ORDER BY t.app_name, t.title, t.id ASC
+	</select>
+
 	<insert id="save" parameterType="com.xxl.job.admin.model.XxlJobGroup" useGeneratedKeys="true" keyProperty="id" >
 		INSERT INTO xxl_job_group ( `app_name`, `title`, `address_type`, `address_list`, `update_time`)
 		values ( #{appname}, #{title}, #{addressType}, #{addressList}, #{updateTime} );

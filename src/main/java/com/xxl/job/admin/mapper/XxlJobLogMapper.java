@@ -59,4 +59,6 @@ public interface XxlJobLogMapper {
 
 	public List<Long> findLostJobIds(@Param("losedTime") Date losedTime);
 
+	List<XxlJobLog> queryTaskLastColumns(@Param("logId")long id);
+
 }

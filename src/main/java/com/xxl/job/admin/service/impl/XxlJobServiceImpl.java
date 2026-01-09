@@ -137,7 +137,7 @@ public class XxlJobServiceImpl implements XxlJobService {
 								MessageFormat.format((I18nUtil.getString("jobinfo_field_childJobId")+"({0})"+I18nUtil.getString("system_not_found")), childJobIdItem));
 					}
 					// valid jobGroup permission
-					if (!JobGroupPermissionUtil.hasJobGroupPermission(loginInfo, childJobInfo.getJobGroup())) {
+					if (!JobGroupPermissionUtil.hasJobGroupPermission(loginInfo, childJobInfo.getJobGroup()) && !Objects.equals("api", loginInfo.getUserName())) {
 						return Response.ofFail (
 								MessageFormat.format((I18nUtil.getString("jobinfo_field_childJobId")+"({0})"+I18nUtil.getString("system_permission_limit")), childJobIdItem));
 					}
@@ -306,6 +306,7 @@ public class XxlJobServiceImpl implements XxlJobService {
 		exists_jobInfo.setTriggerNextTime(nextTriggerTime);
 
 		exists_jobInfo.setUpdateTime(new Date());
+		exists_jobInfo.setRemark(jobInfo.getRemark());
         xxlJobInfoMapper.update(exists_jobInfo);
 
 		// write operation log
@@ -324,7 +325,7 @@ public class XxlJobServiceImpl implements XxlJobService {
 		}
 
 		// valid jobGroup permission
-		if (!JobGroupPermissionUtil.hasJobGroupPermission(loginInfo, xxlJobInfo.getJobGroup())) {
+		if (!JobGroupPermissionUtil.hasJobGroupPermission(loginInfo, xxlJobInfo.getJobGroup())  && !Objects.equals("api", loginInfo.getUserName())) {
 			return Response.ofFail(I18nUtil.getString("system_permission_limit"));
 		}
 

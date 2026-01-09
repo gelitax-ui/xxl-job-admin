@@ -1,6 +1,9 @@
 package com.xxl.job.admin.scheduler.openapi;
 
+import com.xxl.job.admin.bean.CopyGroupAndJobParam;
+import com.xxl.job.admin.bean.DeleteGroupAndJobParam;
 import com.xxl.job.admin.scheduler.config.XxlJobAdminBootstrap;
+import com.xxl.job.admin.service.AdminBizExt;
 import com.xxl.job.core.constant.Const;
 import com.xxl.job.core.openapi.AdminBiz;
 import com.xxl.job.core.openapi.model.CallbackRequest;
@@ -23,7 +26,7 @@ import java.util.List;
 public class OpenApiController {
 
     @Resource
-    private AdminBiz adminBiz;
+    private AdminBizExt adminBiz;
 
     /**
      * api
@@ -68,6 +71,14 @@ public class OpenApiController {
                     RegistryRequest registryParam = GsonTool.fromJson(requestBody, RegistryRequest.class);
                     return adminBiz.registryRemove(registryParam);
                     }
+                case "copyGroupAndJob": {
+                    CopyGroupAndJobParam param = GsonTool.fromJson(requestBody, CopyGroupAndJobParam.class);
+                    return adminBiz.copyGroupAndJob(param);
+                }
+                case "deleteGroupAndJob": {
+                    DeleteGroupAndJobParam param = GsonTool.fromJson(requestBody, DeleteGroupAndJobParam.class);
+                    return adminBiz.deleteGroupAndJob(param.getGroupAppName());
+                }
                 default:
                     return Response.ofFail("invalid request, uri-mapping("+ uri +") not found.");
             }
