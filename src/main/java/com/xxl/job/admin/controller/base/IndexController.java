@@ -64,7 +64,10 @@ public class IndexController {
 				new XxlBootResourceDTO(3, 0, I18nUtil.getString("joblog_name"),1, "", "/joblog", " fa-database", 3, 0, null),
 				new XxlBootResourceDTO(4, 0, I18nUtil.getString("jobgroup_name"),1, Consts.ADMIN_ROLE, "/jobgroup", " fa-cloud", 4, 0,null),
 				new XxlBootResourceDTO(5, 0, I18nUtil.getString("user_manage"),1, Consts.ADMIN_ROLE, "/user", "fa-users", 5, 0, null),
-				new XxlBootResourceDTO(9, 0, I18nUtil.getString("admin_help"),1, "", "/help", "fa-book", 6, 0, null)
+				new XxlBootResourceDTO(10, 0, I18nUtil.getString("conf_name"),1, Consts.ADMIN_ROLE, "/conf", "fa-cog", 6, 0, null),
+				new XxlBootResourceDTO(11, 0, I18nUtil.getString("plate_conf"),1, Consts.ADMIN_ROLE, "/plate", "fa-sliders", 7, 0, null),
+//				new XxlBootResourceDTO(12, 0, I18nUtil.getString("data_query"),1, Consts.ADMIN_ROLE, "/data", "fa-search", 8, 0, null),
+				new XxlBootResourceDTO(9, 0, I18nUtil.getString("admin_help"),1, "", "/help", "fa-book", 9, 0, null)
 		);
 
 		// filter by role
