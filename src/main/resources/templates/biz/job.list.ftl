@@ -1198,6 +1198,7 @@ exit 0
 				$("#updateModal .form input[name='jobDesc']").val( row.jobDesc );
 				$("#updateModal .form input[name='author']").val( row.author );
 				$("#updateModal .form input[name='alarmEmail']").val( row.alarmEmail );
+				$("#updateModal .form input[name='remark']").val( row.remark );
 
 				// fill trigger
 				$('#updateModal .form select[name=scheduleType] option[value='+ row.scheduleType +']').prop('selected', true);
