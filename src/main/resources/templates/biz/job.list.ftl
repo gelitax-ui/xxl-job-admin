@@ -7,6 +7,14 @@
 	<!-- 1-style start -->
 	<@netCommon.commonStyle />
 	<link rel="stylesheet" href="${request.contextPath}/static/plugins/bootstrap-table/bootstrap-table.min.css">
+	<link rel="stylesheet" href="${request.contextPath}/static/adminlte/bower_components/select2/select2.min.css">
+	<style>
+		.select2-container--default .select2-selection--multiple .select2-selection__choice {
+			color: #333;
+			background-color: #e4e4e4;
+			border-color: #aaa;
+		}
+	</style>
 	<!-- 1-style end -->
 
 </head>
@@ -121,15 +129,34 @@
 								<div class="col-sm-4"><input type="text" class="form-control" name="jobDesc" placeholder="${I18n.system_please_input}${I18n.jobinfo_field_jobdesc}" maxlength="50" ></div>
 							</div>
 							<div class="form-group">
+								<label class="col-sm-2 control-label">任务编码<font color="red">*</font></label>
+								<div class="col-sm-4">
+									<div class="input-group">
+										<input type="text" class="form-control" name="jobCode" placeholder="请输入任务编码（字母或数字）" maxlength="64" >
+										<span class="input-group-btn">
+											<button type="button" class="btn btn-default generateJobCode">生成</button>
+										</span>
+									</div>
+								</div>
 								<label for="lastname" class="col-sm-2 control-label">${I18n.jobinfo_field_author}<font color="red">*</font></label>
 								<div class="col-sm-4"><input type="text" class="form-control" name="author" placeholder="${I18n.system_please_input}${I18n.jobinfo_field_author}" maxlength="50" ></div>
-								<label for="lastname" class="col-sm-2 control-label">${I18n.jobinfo_field_alarmemail}<font color="black">*</font></label>
-								<div class="col-sm-4"><input type="text" class="form-control" name="alarmEmail" placeholder="${I18n.jobinfo_field_alarmemail_placeholder}" maxlength="100" ></div>
 							</div>
 							<div class="form-group">
+								<label for="lastname" class="col-sm-2 control-label">${I18n.jobinfo_field_alarmemail}<font color="black">*</font></label>
+								<div class="col-sm-4"><input type="text" class="form-control" name="alarmEmail" placeholder="${I18n.jobinfo_field_alarmemail_placeholder}" maxlength="100" ></div>
 								<label for="firstname" class="col-sm-2 control-label">${I18n.jobinfo_field_remark}<font color="black">*</font></label>
-								<div class="col-sm-10">
+								<div class="col-sm-4">
 									<input type="text" class="form-control" name="remark" placeholder="${I18n.system_please_input}${I18n.jobinfo_field_remark}" maxlength="255" >
+								</div>
+							</div>
+							<div class="form-group">
+								<label class="col-sm-2 control-label">同步执行器</label>
+								<div class="col-sm-10">
+									<select class="form-control extraGroups" name="extraGroups" multiple="multiple" style="width:100%">
+										<#list JobGroupList as group>
+											<option value="${group.id}">${group.title}</option>
+										</#list>
+									</select>
 								</div>
 							</div>
 
@@ -387,15 +414,31 @@ exit 0
 								<div class="col-sm-4"><input type="text" class="form-control" name="jobDesc" placeholder="${I18n.system_please_input}${I18n.jobinfo_field_jobdesc}" maxlength="50" ></div>
 							</div>
 							<div class="form-group">
+								<label class="col-sm-2 control-label">任务编码<font color="red">*</font></label>
+								<div class="col-sm-4">
+									<div class="input-group">
+										<input type="text" class="form-control" name="jobCode" placeholder="请输入任务编码（字母或数字）" maxlength="64" >
+										<span class="input-group-btn">
+											<button type="button" class="btn btn-default generateJobCode">生成</button>
+										</span>
+									</div>
+								</div>
 								<label for="lastname" class="col-sm-2 control-label">${I18n.jobinfo_field_author}<font color="red">*</font></label>
 								<div class="col-sm-4"><input type="text" class="form-control" name="author" placeholder="${I18n.system_please_input}${I18n.jobinfo_field_author}" maxlength="50" ></div>
-								<label for="lastname" class="col-sm-2 control-label">${I18n.jobinfo_field_alarmemail}<font color="black">*</font></label>
-								<div class="col-sm-4"><input type="text" class="form-control" name="alarmEmail" placeholder="${I18n.jobinfo_field_alarmemail_placeholder}" maxlength="100" ></div>
 							</div>
 							<div class="form-group">
+								<label for="lastname" class="col-sm-2 control-label">${I18n.jobinfo_field_alarmemail}<font color="black">*</font></label>
+								<div class="col-sm-4"><input type="text" class="form-control" name="alarmEmail" placeholder="${I18n.jobinfo_field_alarmemail_placeholder}" maxlength="100" ></div>
 								<label for="firstname" class="col-sm-2 control-label">${I18n.jobinfo_field_remark}<font color="black">*</font></label>
-								<div class="col-sm-10">
+								<div class="col-sm-4">
 									<input type="text" class="form-control" name="remark" placeholder="${I18n.system_please_input}${I18n.jobinfo_field_remark}" maxlength="255" >
+								</div>
+							</div>
+							<div class="form-group">
+								<label class="col-sm-2 control-label">同步执行器</label>
+								<div class="col-sm-10">
+									<select class="form-control extraGroups" name="extraGroups" multiple="multiple" style="width:100%">
+									</select>
 								</div>
 							</div>
 
@@ -531,6 +574,16 @@ exit 0
 									<textarea class="textarea form-control" name="addressList" placeholder="${I18n.jobinfo_opt_run_tips}" maxlength="512" style="height: 63px; line-height: 1.2;"></textarea>
 								</div>
 							</div>
+							<div id="triggerExtraGroupsArea" style="display:none;">
+								<div class="form-group">
+									<label class="col-sm-2 control-label">同步执行器</label>
+									<div class="col-sm-10">
+										<select id="triggerExtraGroupSelect" multiple="multiple" style="width:100%">
+										</select>
+									</div>
+								</div>
+								<div id="triggerExtraAddressContainer"></div>
+							</div>
 							<hr>
 							<div class="form-group">
 								<div class="col-sm-offset-3 col-sm-6">
@@ -540,6 +593,55 @@ exit 0
 								</div>
 							</div>
 						</form>
+					</div>
+				</div>
+			</div>
+		</div>
+
+		<!-- 复制任务.模态框 -->
+		<div class="modal fade" id="copyModal" tabindex="-1" role="dialog" aria-hidden="true">
+			<div class="modal-dialog">
+				<div class="modal-content">
+					<div class="modal-header">
+						<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+						<h4 class="modal-title">复制任务</h4>
+					</div>
+					<div class="modal-body">
+						<div class="form-group">
+							<label>选择目标执行器<font color="red">*</font></label>
+							<select id="copyJobGroupSelect" multiple="multiple" style="width:100%">
+								<#list JobGroupList as group>
+									<option value="${group.id}">${group.title}</option>
+								</#list>
+							</select>
+						</div>
+					</div>
+					<div class="modal-footer">
+						<button type="button" class="btn btn-primary" id="copyConfirmBtn">确认复制</button>
+						<button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+					</div>
+				</div>
+			</div>
+		</div>
+
+		<!-- 同步操作.模态框 -->
+		<div class="modal fade" id="syncOpModal" tabindex="-1" role="dialog" aria-hidden="true">
+			<div class="modal-dialog">
+				<div class="modal-content">
+					<div class="modal-header">
+						<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+						<h4 class="modal-title" id="syncOpTitle">同步操作</h4>
+					</div>
+					<div class="modal-body">
+						<div class="form-group">
+							<label>以下执行器存在相同编码的任务，是否同步操作？</label>
+							<select id="syncOpGroupSelect" multiple="multiple" style="width:100%">
+							</select>
+						</div>
+					</div>
+					<div class="modal-footer">
+						<button type="button" class="btn btn-primary" id="syncOpConfirmBtn">确认</button>
+						<button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
 					</div>
 				</div>
 			</div>
@@ -562,7 +664,14 @@ exit 0
 <script src="${request.contextPath}/static/adminlte/bower_components/moment/moment.min.js"></script>
 <#-- cronGen -->
 <script src="${request.contextPath}/static/plugins/cronGen/<#if I18n.admin_i18n?? && I18n.admin_i18n == 'en'>cronGen_en.js<#else>cronGen.js</#if>"></script>
+<#-- select2 -->
+<script src="${request.contextPath}/static/adminlte/bower_components/select2/select2.min.js"></script>
 <script>
+	// 自定义校验规则：仅允许英文字母或数字
+	$.validator.addMethod("alphanumeric", function(value, element) {
+		return this.optional(element) || /^[a-zA-Z0-9]+$/.test(value);
+	}, "仅允许英文字母或数字");
+
 	$(function() {
 
 		// ---------------------- filter ----------------------
@@ -642,9 +751,15 @@ exit 0
 						}
 					}
 				},{
+					title: '任务编码',
+					field: 'jobCode',
+					width: '10',
+					widthUnit: '%',
+					align: 'left'
+				},{
 					title: I18n.jobinfo_field_remark,
 					field: 'remark',
-					width: '25',
+					width: '20',
 					widthUnit: '%',
 					align: 'left'
 				},{
@@ -706,56 +821,110 @@ exit 0
 		// ---------------------- delete ----------------------
 
 		/**
-		 * delete
+		 * showSyncOpModal: 同步操作弹窗（删除/启动/停止共用）
+		 * @param row         当前选中行数据
+		 * @param opTitle     操作标题（如 "删除"、"启动"、"停止"）
+		 * @param opUrl       操作请求地址（如 "/jobinfo/delete"）
+		 * @param successMsg  成功提示
+		 * @param failMsg     失败提示
 		 */
-		/*$.adminTable.initDelete({
-			url: base_url + "/jobinfo/delete"
-		});*/
-		$("#data_operation").on('click', '.delete',function() {
-			// get select rows
-			var rows = $.adminTable.table.bootstrapTable('getSelections');
+		function showSyncOpModal(row, opTitle, opUrl, successMsg, failMsg) {
+			var selectIds = [row.id];
 
-			// find select ids
-			const selectIds = (rows && rows.length > 0) ? rows.map(row => row.id) : [];
-			if (selectIds.length !== 1) {
-				layer.msg(I18n.system_please_choose + I18n.system_one + I18n.system_data);
-				return;
-			}
-
-			// do delete
-			layer.confirm( I18n.system_ok + I18n.system_opt_del + '?', {
-				icon: 3,
-				title: I18n.system_tips ,
-				btn: [ I18n.system_ok, I18n.system_cancel ]
-			}, function(index){
-				layer.close(index);
-
+			// 执行实际操作的函数
+			function doOp(extraGroups) {
+				var postData = { "ids": selectIds };
+				if (extraGroups && extraGroups.length > 0) {
+					postData["extraGroups"] = extraGroups;
+				}
 				$.ajax({
-					type : 'POST',
-					url : base_url + "/jobinfo/delete",
-					data : {
-						"ids" : selectIds
-					},
-					dataType : "json",
-					success : function(data){
+					type: 'POST',
+					url: base_url + opUrl,
+					data: postData,
+					dataType: "json",
+					success: function(data) {
 						if (data.code === 200) {
-							layer.msg( I18n.system_opt_del + I18n.system_success );
-							// refresh table
+							layer.msg(successMsg);
 							$('#data_filter .searchBtn').click();
 						} else {
-							layer.msg( data.msg || I18n.system_opt_del + I18n.system_fail );
+							layer.msg(data.msg || failMsg);
 						}
 					},
 					error: function(xhr, status, error) {
-						// Handle error
 						console.log("Error: " + error);
-						layer.open({
-							icon: '2',
-							content: (I18n.system_opt_del + I18n.system_fail)
-						});
+						layer.open({ icon: '2', content: failMsg });
 					}
 				});
-			});
+			}
+
+			// 若无 jobCode，直接走原有逻辑
+			if (!row.jobCode) {
+				layer.confirm(I18n.system_ok + opTitle + '?', {
+					icon: 3, title: I18n.system_tips,
+					btn: [I18n.system_ok, I18n.system_cancel]
+				}, function(index) {
+					layer.close(index);
+					doOp(null);
+				});
+				return;
+			}
+
+			// 查询是否有其他执行器拥有相同 jobCode
+			$.get(base_url + "/jobinfo/groupsWithCode",
+				{ jobCode: row.jobCode, excludeGroup: row.jobGroup },
+				function(data) {
+					if (data.code == 200 && data.data && data.data.length > 0) {
+						// 有其他执行器 → 弹出 syncOpModal
+						$('#syncOpTitle').text('同步' + opTitle);
+						var $select = $('#syncOpGroupSelect');
+						$select.empty();
+						var allIds = [];
+						data.data.forEach(function(gid) {
+							// 从 JobGroupList 获取执行器名称
+							var title = '';
+							<#list JobGroupList as group>
+							if (gid == ${group.id}) { title = '${group.title}'; }
+							</#list>
+							$select.append('<option value="'+ gid +'">'+ (title || ('执行器' + gid)) +'</option>');
+							allIds.push(gid);
+						});
+						$select.val(allIds);
+						$select.select2({ placeholder: "选择要同步操作的执行器", width: '100%' });
+
+						// 绑定确认按钮（先解绑旧事件）
+						$('#syncOpConfirmBtn').off('click').on('click', function() {
+							var extraGroups = $select.val();
+							$('#syncOpModal').modal('hide');
+							doOp(extraGroups);
+						});
+
+						$('#syncOpModal').modal('show');
+					} else {
+						// 无其他执行器 → 直接 confirm
+						layer.confirm(I18n.system_ok + opTitle + '?', {
+							icon: 3, title: I18n.system_tips,
+							btn: [I18n.system_ok, I18n.system_cancel]
+						}, function(index) {
+							layer.close(index);
+							doOp(null);
+						});
+					}
+				}
+			);
+		}
+
+		/**
+		 * delete
+		 */
+		$("#data_operation").on('click', '.delete',function() {
+			var rows = $.adminTable.table.bootstrapTable('getSelections');
+			if (rows.length !== 1) {
+				layer.msg(I18n.system_please_choose + I18n.system_one + I18n.system_data);
+				return;
+			}
+			showSyncOpModal(rows[0], I18n.system_opt_del, '/jobinfo/delete',
+				I18n.system_opt_del + I18n.system_success,
+				I18n.system_opt_del + I18n.system_fail);
 		});
 
 		// ---------------------- start  ----------------------
@@ -764,50 +933,14 @@ exit 0
 		 * start
 		 */
 		$("#data_operation").on('click', '.job_resume',function() {
-			// get select rows
 			var rows = $.adminTable.table.bootstrapTable('getSelections');
-
-			// find select ids
-			const selectIds = (rows && rows.length > 0) ? rows.map(row => row.id) : [];
-			if (selectIds.length !== 1) {
+			if (rows.length !== 1) {
 				layer.msg(I18n.system_please_choose + I18n.system_one + I18n.system_data);
 				return;
 			}
-
-			// invoke
-			layer.confirm( I18n.system_ok + I18n.jobinfo_opt_start + '?', {
-				icon: 3,
-				title: I18n.system_tips ,
-				btn: [ I18n.system_ok, I18n.system_cancel ]
-			}, function(index){
-				layer.close(index);
-
-				$.ajax({
-					type : 'POST',
-					url : base_url + "/jobinfo/start",
-					data : {
-						"ids" : selectIds
-					},
-					dataType : "json",
-					success : function(data){
-						if (data.code === 200) {
-							layer.msg( I18n.jobinfo_opt_start + I18n.system_success );
-							// refresh table
-							$('#data_filter .searchBtn').click();
-						} else {
-							layer.msg( data.msg || I18n.jobinfo_opt_start + I18n.system_fail );
-						}
-					},
-					error: function(xhr, status, error) {
-						// Handle error
-						console.log("Error: " + error);
-						layer.open({
-							icon: '2',
-							content: (I18n.jobinfo_opt_start + I18n.system_fail)
-						});
-					}
-				});
-			});
+			showSyncOpModal(rows[0], I18n.jobinfo_opt_start, '/jobinfo/start',
+				I18n.jobinfo_opt_start + I18n.system_success,
+				I18n.jobinfo_opt_start + I18n.system_fail);
 		});
 
 		// ---------------------- stop ----------------------
@@ -816,50 +949,14 @@ exit 0
 		 * stop
 		 */
 		$("#data_operation").on('click', '.job_pause',function() {
-			// get select rows
 			var rows = $.adminTable.table.bootstrapTable('getSelections');
-
-			// find select ids
-			const selectIds = (rows && rows.length > 0) ? rows.map(row => row.id) : [];
-			if (selectIds.length !== 1) {
+			if (rows.length !== 1) {
 				layer.msg(I18n.system_please_choose + I18n.system_one + I18n.system_data);
 				return;
 			}
-
-			// invoke
-			layer.confirm( I18n.system_ok + I18n.jobinfo_opt_stop + '?', {
-				icon: 3,
-				title: I18n.system_tips ,
-				btn: [ I18n.system_ok, I18n.system_cancel ]
-			}, function(index){
-				layer.close(index);
-
-				$.ajax({
-					type : 'POST',
-					url : base_url + "/jobinfo/stop",
-					data : {
-						"ids" : selectIds
-					},
-					dataType : "json",
-					success : function(data){
-						if (data.code === 200) {
-							layer.msg( I18n.jobinfo_opt_stop + I18n.system_success );
-							// refresh table
-							$('#data_filter .searchBtn').click();
-						} else {
-							layer.msg( data.msg || I18n.jobinfo_opt_stop + I18n.system_fail );
-						}
-					},
-					error: function(xhr, status, error) {
-						// Handle error
-						console.log("Error: " + error);
-						layer.open({
-							icon: '2',
-							content: (I18n.jobinfo_opt_stop + I18n.system_fail)
-						});
-					}
-				});
-			});
+			showSyncOpModal(rows[0], I18n.jobinfo_opt_stop, '/jobinfo/stop',
+				I18n.jobinfo_opt_stop + I18n.system_success,
+				I18n.jobinfo_opt_stop + I18n.system_fail);
 		});
 
 		// ---------------------- trigger ----------------------
@@ -867,6 +964,12 @@ exit 0
 		/**
 		 * job trigger
 		 */
+		// groupId -> title mapping for trigger modal
+		var triggerGroupMap = {};
+		<#list JobGroupList as group>
+		triggerGroupMap[${group.id}] = '${group.title}';
+		</#list>
+
 		$("#data_operation").on('click', '.job_trigger',function() {
 			// get select rows
 			var rows = $.adminTable.table.bootstrapTable('getSelections');
@@ -882,23 +985,129 @@ exit 0
 			$("#jobTriggerModal .form input[name='id']").val( row.id );
 			$("#jobTriggerModal .form textarea[name='executorParam']").val( row.executorParam );
 
+			// init extra groups area
+			var $extraArea = $('#triggerExtraGroupsArea');
+			var $extraSelect = $('#triggerExtraGroupSelect');
+			var $extraContainer = $('#triggerExtraAddressContainer');
+			$extraSelect.empty();
+			$extraContainer.empty();
+			$extraArea.hide();
+
+			if (row.jobCode) {
+				$.get(base_url + "/jobinfo/groupsWithCode",
+					{ jobCode: row.jobCode, excludeGroup: row.jobGroup },
+					function(data) {
+						if (data.code == 200 && data.data && data.data.length > 0) {
+							var allIds = [];
+							data.data.forEach(function(gid) {
+								var title = triggerGroupMap[gid] || ('执行器' + gid);
+								$extraSelect.append('<option value="'+ gid +'">'+ title +'</option>');
+								allIds.push(String(gid));
+							});
+							$extraSelect.val(allIds);
+							$extraSelect.select2({ placeholder: "选择要同步触发的执行器", width: '100%' });
+							$extraArea.show();
+
+							// generate address inputs for default selected
+							renderTriggerExtraAddressInputs();
+						}
+					}
+				);
+			}
+
 			$('#jobTriggerModal').modal({backdrop: false, keyboard: false}).modal('show');
 		});
+
+		// render address inputs based on selected extra groups
+		function renderTriggerExtraAddressInputs() {
+			var $extraContainer = $('#triggerExtraAddressContainer');
+			var selectedIds = $('#triggerExtraGroupSelect').val() || [];
+
+			// preserve existing values
+			var existingValues = {};
+			$extraContainer.find('textarea[data-group-id]').each(function() {
+				existingValues[$(this).attr('data-group-id')] = $(this).val();
+			});
+
+			$extraContainer.empty();
+			selectedIds.forEach(function(gid) {
+				var title = triggerGroupMap[gid] || ('执行器' + gid);
+				var savedVal = existingValues[gid] || '';
+				var html = '<div class="form-group" data-extra-group="'+ gid +'">'
+					+ '<label class="col-sm-2 control-label">'+ title +'</label>'
+					+ '<div class="col-sm-10">'
+					+ '<textarea class="textarea form-control" data-group-id="'+ gid +'" placeholder="执行地址（为空则使用默认地址）" maxlength="512" style="height: 50px; line-height: 1.2;">'+ savedVal +'</textarea>'
+					+ '</div></div>';
+				$extraContainer.append(html);
+			});
+		}
+
+		// listen select2 change
+		$(document).on('change', '#triggerExtraGroupSelect', function() {
+			renderTriggerExtraAddressInputs();
+		});
+
 		$("#jobTriggerModal .ok").on('click',function() {
+			var postData = {
+				"id" : $("#jobTriggerModal .form input[name='id']").val(),
+				"executorParam" : $("#jobTriggerModal .textarea[name='executorParam']").val(),
+				"addressList" : $("#jobTriggerModal .textarea[name='addressList']").val()
+			};
+
+			// collect extra groups and their addressList
+			var selectedIds = $('#triggerExtraGroupSelect').val() || [];
+			if (selectedIds.length > 0) {
+				var groups = [];
+				var addrs = [];
+				selectedIds.forEach(function(gid) {
+					groups.push(gid);
+					var addr = $('#triggerExtraAddressContainer textarea[data-group-id="'+ gid +'"]').val() || '';
+					addrs.push(addr);
+				});
+				postData["extraGroups"] = groups;
+				postData["extraAddressList"] = addrs;
+			}
+
 			$.ajax({
 				type : 'POST',
 				url : base_url + "/jobinfo/trigger",
-				data : {
-					"id" : $("#jobTriggerModal .form input[name='id']").val(),
-					"executorParam" : $("#jobTriggerModal .textarea[name='executorParam']").val(),
-					"addressList" : $("#jobTriggerModal .textarea[name='addressList']").val()
-				},
+				data : postData,
+				traditional : true,
 				dataType : "json",
 				success : function(data){
-					if (data.code == 200) {
+					if (data.code == 200 && data.data && data.data.length > 0) {
 						$('#jobTriggerModal').modal('hide');
-
-						layer.msg( I18n.jobinfo_opt_run + I18n.system_success );
+						var results = data.data;
+						// single executor: simple message
+						if (results.length === 1) {
+							if (results[0].success) {
+								layer.msg(I18n.jobinfo_opt_run + I18n.system_success);
+							} else {
+								layer.msg(results[0].groupTitle + '：' + results[0].msg);
+							}
+						} else {
+							// multiple executors: show detail popup
+							var html = '<div style="text-align:left;padding:10px;">';
+							for (var i = 0; i < results.length; i++) {
+								var r = results[i];
+								var icon = r.success
+									? '<span class="label label-success">成功</span>'
+									: '<span class="label label-danger">失败</span>';
+								html += '<p>' + icon + ' <b>' + r.groupTitle + '</b>';
+								if (!r.success) {
+									html += '：' + r.msg;
+								}
+								html += '</p>';
+							}
+							html += '<p style="color:gray;margin-top:10px;border-top:1px solid #eee;padding-top:8px;">以任务执行日志结果为准</p>';
+							html += '</div>';
+							layer.open({
+								title: I18n.jobinfo_opt_run + ' - 执行结果',
+								btn: [I18n.system_ok],
+								area: ['450px'],
+								content: html
+							});
+						}
 					} else {
 						layer.msg( data.msg || I18n.jobinfo_opt_run + I18n.system_fail );
 					}
@@ -907,6 +1116,9 @@ exit 0
 		});
 		$("#jobTriggerModal").on('hide.bs.modal', function () {
 			$("#jobTriggerModal .form")[0].reset();
+			$('#triggerExtraGroupSelect').empty();
+			$('#triggerExtraAddressContainer').empty();
+			$('#triggerExtraGroupsArea').hide();
 		});
 
 		// ---------------------- registryinfo ----------------------
@@ -1069,6 +1281,11 @@ exit 0
 					required : true,
 					maxlength: 50
 				},
+				jobCode : {
+					required : true,
+					maxlength: 64,
+					alphanumeric: true
+				},
 				author : {
 					required : true
 				}
@@ -1076,6 +1293,10 @@ exit 0
 			messages : {
 				jobDesc : {
 					required : I18n.system_please_input + I18n.jobinfo_field_jobdesc
+				},
+				jobCode : {
+					required : '请输入任务编码',
+					alphanumeric: '任务编码仅允许英文字母或数字'
 				},
 				author : {
 					required : I18n.system_please_input + I18n.jobinfo_field_author
@@ -1091,6 +1312,14 @@ exit 0
 
 				// 》init glueType
 				$("#addModal .form select[name=glueType]").change();
+
+				// init extraGroups Select2
+				var currentGroup = $("#addModal .form select[name='jobGroup']").val();
+				var $extra = $("#addModal .form select[name='extraGroups']");
+				$extra.val(null);
+				$extra.find('option').prop('disabled', false);
+				$extra.find('option[value="'+ currentGroup +'"]').prop('disabled', true).prop('selected', false);
+				$extra.select2({ placeholder: "可选：同步新增到其他执行器", width: '100%' });
 			},
 			readFormData: function() {
 
@@ -1120,6 +1349,39 @@ exit 0
 
 				return $("#addModal .form").serialize();
 			}
+		});
+
+		// generateJobCode: 根据任务描述自动生成任务编码
+		$(".generateJobCode").click(function(){
+			var $form = $(this).closest('form');
+			var jobDesc = $form.find("input[name='jobDesc']").val();
+			if (!jobDesc) {
+				layer.msg("请先输入任务描述");
+				return;
+			}
+			var $btn = $(this);
+			$btn.prop('disabled', true);
+			$.get(base_url + "/jobinfo/generateCode", { jobDesc: jobDesc }, function(data) {
+				$btn.prop('disabled', false);
+				if (data.code == 200) {
+					$form.find("input[name='jobCode']").val(data.data);
+				} else {
+					layer.msg(data.msg || "生成失败");
+				}
+			}).fail(function() {
+				$btn.prop('disabled', false);
+				layer.msg("请求失败");
+			});
+		});
+
+		// addModal jobGroup change: update extraGroups disabled option
+		$("#addModal .form select[name='jobGroup']").change(function(){
+			var currentGroup = $(this).val();
+			var $extra = $("#addModal .form select[name='extraGroups']");
+			$extra.val(null);
+			$extra.find('option').prop('disabled', false);
+			$extra.find('option[value="'+ currentGroup +'"]').prop('disabled', true);
+			$extra.trigger('change');
 		});
 
 		// scheduleType change
@@ -1178,6 +1440,11 @@ exit 0
 					required : true,
 					maxlength: 50
 				},
+				jobCode : {
+					required : true,
+					maxlength: 64,
+					alphanumeric: true
+				},
 				author : {
 					required : true
 				}
@@ -1185,6 +1452,10 @@ exit 0
 			messages : {
 				jobDesc : {
 					required : I18n.system_please_input + I18n.jobinfo_field_jobdesc
+				},
+				jobCode : {
+					required : '请输入任务编码',
+					alphanumeric: '任务编码仅允许英文字母或数字'
 				},
 				author : {
 					required : I18n.system_please_input + I18n.jobinfo_field_author
@@ -1196,6 +1467,7 @@ exit 0
 				$("#updateModal .form input[name='id']").val( row.id );
 				$('#updateModal .form select[name=jobGroup] option[value='+ row.jobGroup +']').prop('selected', true);
 				$("#updateModal .form input[name='jobDesc']").val( row.jobDesc );
+				$("#updateModal .form input[name='jobCode']").val( row.jobCode );
 				$("#updateModal .form input[name='author']").val( row.author );
 				$("#updateModal .form input[name='alarmEmail']").val( row.alarmEmail );
 				$("#updateModal .form input[name='remark']").val( row.remark );
@@ -1234,6 +1506,29 @@ exit 0
 				$("#updateModal .form input[name='executorTimeout']").val( row.executorTimeout );
 				$("#updateModal .form input[name='executorFailRetryCount']").val( row.executorFailRetryCount );
 
+				// init extraGroups Select2 for update
+				var $extra = $("#updateModal .form select[name='extraGroups']");
+				$extra.empty();
+				if (row.jobCode) {
+					$.get(base_url + "/jobinfo/groupsWithCode",
+						{ jobCode: row.jobCode, excludeGroup: row.jobGroup },
+						function(data) {
+							if (data.code == 200 && data.data) {
+								var allIds = [];
+								data.data.forEach(function(gid) {
+									var title = $("#updateModal .form select[name='jobGroup'] option[value='"+ gid +"']").text();
+									$extra.append('<option value="'+ gid +'">'+ title +'</option>');
+									allIds.push(gid);
+								});
+								$extra.val(allIds);
+							}
+							$extra.select2({ placeholder: "可选：同步更新到其他执行器", width: '100%' });
+						}
+					);
+				} else {
+					$extra.select2({ placeholder: "可选：同步更新到其他执行器", width: '100%' });
+				}
+
 			},
 			readFormData: function() {
 
@@ -1269,9 +1564,9 @@ exit 0
 		// ---------------------- job_copy ----------------------
 
 		/**
-		 * job_copy
+		 * job_copy：多选执行器批量复制
 		 */
-		$("#data_operation").on('click', '.job_copy',function() {
+		$("#data_operation").on('click', '.job_copy', function() {
 			// get select rows
 			var rows = $.adminTable.table.bootstrapTable('getSelections');
 
@@ -1282,49 +1577,95 @@ exit 0
 			}
 			var row = rows[0];
 
-			// open addModel
-			$("#data_operation .add").click();
+			// 初始化 Select2 多选，默认为空
+			$('#copyJobGroupSelect').val(null).trigger('change');
+			$('#copyJobGroupSelect').select2({
+				placeholder: "请选择目标执行器",
+				allowClear: true
+			});
 
-			// fill base
-			$('#addModal .form select[name=jobGroup] option[value='+ row.jobGroup +']').prop('selected', true);
-			$("#addModal .form input[name='jobDesc']").val( row.jobDesc );
-			$("#addModal .form input[name='remark']").val( row.remark );
-			$("#addModal .form input[name='author']").val( row.author );
-			$("#addModal .form input[name='alarmEmail']").val( row.alarmEmail );
+			// 存储行数据到 modal
+			$('#copyModal').data('row', row);
+			$('#copyModal').modal('show');
+		});
 
-			// fill trigger
-			$('#addModal .form select[name=scheduleType] option[value='+ row.scheduleType +']').prop('selected', true);
-			$("#addModal .form input[name='scheduleConf']").val( row.scheduleConf );
-			if (row.scheduleType == 'CRON') {
-				$("#addModal .form input[name='schedule_conf_CRON']").val( row.scheduleConf );
-			} else if (row.scheduleType == 'FIX_RATE') {
-				$("#addModal .form input[name='schedule_conf_FIX_RATE']").val( row.scheduleConf );
-			} else if (row.scheduleType == 'FIX_DELAY') {
-				$("#addModal .form input[name='schedule_conf_FIX_DELAY']").val( row.scheduleConf );
+		/**
+		 * 构建复制任务的表单数据
+		 */
+		function buildCopyFormData(row, groupId) {
+			var formData = {
+				jobGroup: groupId,
+				jobCode: row.jobCode,
+				jobDesc: row.jobDesc,
+				author: row.author,
+				alarmEmail: row.alarmEmail,
+				remark: row.remark,
+				scheduleType: row.scheduleType,
+				scheduleConf: row.scheduleConf,
+				glueType: row.glueType,
+				executorHandler: row.executorHandler,
+				executorParam: row.executorParam,
+				executorRouteStrategy: row.executorRouteStrategy,
+				childJobId: row.childJobId,
+				misfireStrategy: row.misfireStrategy,
+				executorBlockStrategy: row.executorBlockStrategy,
+				executorTimeout: row.executorTimeout || 0,
+				executorFailRetryCount: row.executorFailRetryCount || 0,
+				glueRemark: 'GLUE代码初始化',
+				glueSource: ''
+			};
+			return formData;
+		}
+
+		/**
+		 * 确认复制
+		 */
+		$('#copyConfirmBtn').on('click', function() {
+			var row = $('#copyModal').data('row');
+			var selectedGroups = $('#copyJobGroupSelect').val();
+			if (!selectedGroups || selectedGroups.length === 0) {
+				layer.msg("请选择至少一个执行器");
+				return;
 			}
 
-			// 》init scheduleType
-			$("#addModal .form select[name=scheduleType]").change();
+			var successCount = 0, skipCount = 0, failCount = 0, totalCount = selectedGroups.length;
+			var $btn = $(this);
+			$btn.prop('disabled', true);
 
-			// fill job
-			$('#addModal .form select[name=glueType] option[value='+ row.glueType +']').prop('selected', true);
-			$("#addModal .form input[name='executorHandler']").val( row.executorHandler );
-			$("#addModal .form textarea[name='executorParam']").val( row.executorParam );
+			function showCopyResult() {
+				var msg = "复制完成：成功" + successCount + "个";
+				if (skipCount > 0) {
+					msg += "，跳过" + skipCount + "个（编码已存在）";
+				}
+				if (failCount > 0) {
+					msg += "，失败" + failCount + "个";
+				}
+				layer.msg(msg);
+				$btn.prop('disabled', false);
+				$('#copyModal').modal('hide');
+				$.adminTable.table.bootstrapTable('refresh');
+			}
 
-			// 》init glueType
-			$("#addModal .form select[name=glueType]").change();
-
-			// 》init-cronGen
-			$("#addModal .form input[name='schedule_conf_CRON']").show().siblings().remove();
-			$("#addModal .form input[name='schedule_conf_CRON']").cronGen({});
-
-			// fill advanced
-			$('#addModal .form select[name=executorRouteStrategy] option[value='+ row.executorRouteStrategy +']').prop('selected', true);
-			$("#addModal .form input[name='childJobId']").val( row.childJobId );
-			$('#addModal .form select[name=misfireStrategy] option[value='+ row.misfireStrategy +']').prop('selected', true);
-			$('#addModal .form select[name=executorBlockStrategy] option[value='+ row.executorBlockStrategy +']').prop('selected', true);
-			$("#addModal .form input[name='executorTimeout']").val( row.executorTimeout );
-			$("#addModal .form input[name='executorFailRetryCount']").val( row.executorFailRetryCount );
+			selectedGroups.forEach(function(groupId) {
+				var formData = buildCopyFormData(row, groupId);
+				$.post(base_url + "/jobinfo/insert", formData, function(data) {
+					if (data.code == 200) {
+						successCount++;
+					} else if (data.msg && data.msg.indexOf('已存在') > -1) {
+						skipCount++;
+					} else {
+						failCount++;
+					}
+					if (successCount + skipCount + failCount === totalCount) {
+						showCopyResult();
+					}
+				}).fail(function() {
+					failCount++;
+					if (successCount + skipCount + failCount === totalCount) {
+						showCopyResult();
+					}
+				});
+			});
 		});
 
 	});

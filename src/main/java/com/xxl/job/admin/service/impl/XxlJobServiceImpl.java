@@ -80,6 +80,18 @@ public class XxlJobServiceImpl implements XxlJobService {
 			return Response.ofFail ( (I18nUtil.getString("system_please_input")+I18nUtil.getString("jobinfo_field_author")) );
 		}
 
+		// valid jobCode
+		if (StringTool.isBlank(jobInfo.getJobCode())) {
+			return Response.ofFail("请输入任务编码");
+		}
+		if (!jobInfo.getJobCode().matches("^[a-zA-Z0-9]+$")) {
+			return Response.ofFail("任务编码仅允许英文字母或数字");
+		}
+		XxlJobInfo existByCode = xxlJobInfoMapper.loadByGroupAndCode(jobInfo.getJobGroup(), jobInfo.getJobCode());
+		if (existByCode != null) {
+			return Response.ofFail("该执行器下任务编码已存在");
+		}
+
 		// valid trigger
 		ScheduleTypeEnum scheduleTypeEnum = ScheduleTypeEnum.match(jobInfo.getScheduleType(), null);
 		if (scheduleTypeEnum == null) {
@@ -186,6 +198,18 @@ public class XxlJobServiceImpl implements XxlJobService {
 			return Response.ofFail ( (I18nUtil.getString("system_please_input")+I18nUtil.getString("jobinfo_field_author")) );
 		}
 
+		// valid jobCode
+		if (StringTool.isBlank(jobInfo.getJobCode())) {
+			return Response.ofFail("请输入任务编码");
+		}
+		if (!jobInfo.getJobCode().matches("^[a-zA-Z0-9]+$")) {
+			return Response.ofFail("任务编码仅允许英文字母或数字");
+		}
+		XxlJobInfo existByCode = xxlJobInfoMapper.loadByGroupAndCode(jobInfo.getJobGroup(), jobInfo.getJobCode());
+		if (existByCode != null && existByCode.getId() != jobInfo.getId()) {
+			return Response.ofFail("该执行器下任务编码已存在");
+		}
+
 		// valid trigger
 		ScheduleTypeEnum scheduleTypeEnum = ScheduleTypeEnum.match(jobInfo.getScheduleType(), null);
 		if (scheduleTypeEnum == null) {
@@ -289,6 +313,7 @@ public class XxlJobServiceImpl implements XxlJobService {
 		}
 
 		exists_jobInfo.setJobGroup(jobInfo.getJobGroup());
+		exists_jobInfo.setJobCode(jobInfo.getJobCode());
 		exists_jobInfo.setJobDesc(jobInfo.getJobDesc());
 		exists_jobInfo.setAuthor(jobInfo.getAuthor());
 		exists_jobInfo.setAlarmEmail(jobInfo.getAlarmEmail());

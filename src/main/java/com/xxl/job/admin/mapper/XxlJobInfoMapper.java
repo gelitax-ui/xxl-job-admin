@@ -63,5 +63,8 @@ public interface XxlJobInfoMapper {
 
 	List<XxlJobInfo> queryThreeRunHandler();
 
+	XxlJobInfo loadByGroupAndCode(@Param("jobGroup") int jobGroup, @Param("jobCode") String jobCode);
+
+	List<Integer> findGroupsByJobCode(@Param("jobCode") String jobCode, @Param("excludeGroup") int excludeGroup);
 
 }
