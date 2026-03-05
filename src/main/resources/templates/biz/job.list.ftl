@@ -90,8 +90,8 @@
 						<button class="btn btn-sm btn-danger selectOnlyOne delete" type="button"><i class="fa fa-remove "></i>${I18n.system_opt_del}</button>   <#-- delete -->
 						｜
 						<button class="btn btn-sm btn-default selectOnlyOne job_copy" type="button">${I18n.system_opt_copy}</button>
-						<button class="btn btn-sm btn-warning selectOnlyOne job_resume" type="button">${I18n.jobinfo_opt_start}</button>				<#-- 启动 -->
-						<button class="btn btn-sm btn-warning selectOnlyOne job_pause" type="button">${I18n.jobinfo_opt_stop}</button>					<#-- 停止 -->
+						<button class="btn btn-sm btn-warning selectAny job_resume" type="button">${I18n.jobinfo_opt_start}</button>				<#-- 启动 -->
+						<button class="btn btn-sm btn-warning selectAny job_pause" type="button">${I18n.jobinfo_opt_stop}</button>					<#-- 停止 -->
 						｜
 						<button class="btn btn-sm btn-primary selectOnlyOne job_trigger" type="button">${I18n.jobinfo_opt_run}</button>					<#-- 执行一次 -->
 						<button class="btn btn-sm btn-primary selectOnlyOne job_log" type="button">${I18n.jobinfo_opt_log}</button>						<#-- 执行日志：base_url +'/joblog?jobId='+ row.id -->
@@ -941,6 +941,119 @@ exit 0
 		}
 
 		/**
+		 * batchOp: 批量操作（启动/停止多选，支持同步到其他执行器）
+		 */
+		function batchOp(rows, opTitle, opUrl) {
+			// 收集所有选中行的 jobCode，查找涉及的其他执行器
+			var allExtraGroups = {};  // groupId -> title
+			var queryDone = 0;
+			var queryTotal = 0;
+			var rowsWithCode = [];
+
+			rows.forEach(function(row) {
+				if (row.jobCode) {
+					rowsWithCode.push(row);
+				}
+			});
+			queryTotal = rowsWithCode.length;
+
+			function onQueriesDone() {
+				var groupIds = Object.keys(allExtraGroups);
+				if (groupIds.length > 0) {
+					// 有其他执行器 → 弹出 syncOpModal
+					$('#syncOpTitle').text('批量' + opTitle + '（' + rows.length + ' 条任务）');
+					var $select = $('#syncOpGroupSelect');
+					$select.empty();
+					var allIds = [];
+					groupIds.forEach(function(gid) {
+						$select.append('<option value="'+ gid +'">'+ allExtraGroups[gid] +'</option>');
+						allIds.push(gid);
+					});
+					$select.val(allIds);
+					$select.select2({ placeholder: "选择要同步操作的执行器", width: '100%' });
+
+					$('#syncOpConfirmBtn').off('click').on('click', function() {
+						var extraGroups = $select.val();
+						$('#syncOpModal').modal('hide');
+						doBatchOp(rows, opTitle, opUrl, extraGroups);
+					});
+					$('#syncOpModal').modal('show');
+				} else {
+					// 无其他执行器 → 直接确认
+					layer.confirm(I18n.system_ok + opTitle + ' ' + rows.length + ' 条任务?', {
+						icon: 3, title: I18n.system_tips,
+						btn: [I18n.system_ok, I18n.system_cancel]
+					}, function(index) {
+						layer.close(index);
+						doBatchOp(rows, opTitle, opUrl, null);
+					});
+				}
+			}
+
+			if (queryTotal === 0) {
+				onQueriesDone();
+			} else {
+				rowsWithCode.forEach(function(row) {
+					$.get(base_url + "/jobinfo/groupsWithCode",
+						{ jobCode: row.jobCode, excludeGroup: row.jobGroup },
+						function(data) {
+							if (data.code == 200 && data.data) {
+								data.data.forEach(function(gid) {
+									if (!allExtraGroups[gid]) {
+										var title = '';
+										<#list JobGroupList as group>
+										if (gid == ${group.id}) { title = '${group.title}'; }
+										</#list>
+										allExtraGroups[gid] = title || ('执行器' + gid);
+									}
+								});
+							}
+							queryDone++;
+							if (queryDone === queryTotal) { onQueriesDone(); }
+						}
+					).fail(function() {
+						queryDone++;
+						if (queryDone === queryTotal) { onQueriesDone(); }
+					});
+				});
+			}
+		}
+
+		function doBatchOp(rows, opTitle, opUrl, extraGroups) {
+			var successCount = 0;
+			var failCount = 0;
+			var doneCount = 0;
+			var total = rows.length;
+			var loadIndex = layer.load(1);
+			for (var i = 0; i < total; i++) {
+				(function(row) {
+					var postData = { "ids": [row.id] };
+					if (extraGroups && extraGroups.length > 0) {
+						postData["extraGroups"] = extraGroups;
+					}
+					$.ajax({
+						type: 'POST',
+						url: base_url + opUrl,
+						data: postData,
+						dataType: "json",
+						success: function(data) {
+							if (data.code === 200) { successCount++; } else { failCount++; }
+						},
+						error: function() { failCount++; },
+						complete: function() {
+							doneCount++;
+							if (doneCount === total) {
+								layer.close(loadIndex);
+								layer.msg(opTitle + '完成：成功 ' + successCount + ' 条，失败 ' + failCount + ' 条');
+								$('#data_filter .searchBtn').click();
+							}
+						}
+					});
+				})(rows[i]);
+			}
+		}
+
+		/**
 		 * delete
 		 */
 		$("#data_operation").on('click', '.delete',function() {
@@ -957,33 +1070,41 @@ exit 0
 		// ---------------------- start  ----------------------
 
 		/**
-		 * start
+		 * start (支持多选)
 		 */
 		$("#data_operation").on('click', '.job_resume',function() {
 			var rows = $.adminTable.table.bootstrapTable('getSelections');
-			if (rows.length !== 1) {
-				layer.msg(I18n.system_please_choose + I18n.system_one + I18n.system_data);
+			if (rows.length < 1) {
+				layer.msg(I18n.system_please_choose + I18n.system_data);
 				return;
 			}
-			showSyncOpModal(rows[0], I18n.jobinfo_opt_start, '/jobinfo/start',
-				I18n.jobinfo_opt_start + I18n.system_success,
-				I18n.jobinfo_opt_start + I18n.system_fail);
+			if (rows.length === 1) {
+				showSyncOpModal(rows[0], I18n.jobinfo_opt_start, '/jobinfo/start',
+					I18n.jobinfo_opt_start + I18n.system_success,
+					I18n.jobinfo_opt_start + I18n.system_fail);
+			} else {
+				batchOp(rows, I18n.jobinfo_opt_start, '/jobinfo/start');
+			}
 		});
 
 		// ---------------------- stop ----------------------
 
 		/**
-		 * stop
+		 * stop (支持多选)
 		 */
 		$("#data_operation").on('click', '.job_pause',function() {
 			var rows = $.adminTable.table.bootstrapTable('getSelections');
-			if (rows.length !== 1) {
-				layer.msg(I18n.system_please_choose + I18n.system_one + I18n.system_data);
+			if (rows.length < 1) {
+				layer.msg(I18n.system_please_choose + I18n.system_data);
 				return;
 			}
-			showSyncOpModal(rows[0], I18n.jobinfo_opt_stop, '/jobinfo/stop',
-				I18n.jobinfo_opt_stop + I18n.system_success,
-				I18n.jobinfo_opt_stop + I18n.system_fail);
+			if (rows.length === 1) {
+				showSyncOpModal(rows[0], I18n.jobinfo_opt_stop, '/jobinfo/stop',
+					I18n.jobinfo_opt_stop + I18n.system_success,
+					I18n.jobinfo_opt_stop + I18n.system_fail);
+			} else {
+				batchOp(rows, I18n.jobinfo_opt_stop, '/jobinfo/stop');
+			}
 		});
 
 		// ---------------------- trigger ----------------------
