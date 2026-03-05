@@ -124,19 +124,19 @@ public class AdminBizImpl implements AdminBizExt {
         XxlJobInfo jobInfo = new XxlJobInfo();
         jobInfo.setJobGroup(jobGroup);
         jobInfo.setJobCode(param.getJobCode());
-        jobInfo.setJobDesc(param.getJobDesc());
-        jobInfo.setAuthor(param.getAuthor());
+        jobInfo.setJobDesc(StringUtils.hasText(param.getJobDesc()) ? param.getJobDesc() : param.getJobCode());
+        jobInfo.setAuthor(StringUtils.hasText(param.getAuthor()) ? param.getAuthor() : "api");
         jobInfo.setScheduleType("ONCE");
         jobInfo.setScheduleConf(param.getTriggerTime());
         jobInfo.setGlueType("BEAN");
         jobInfo.setExecutorHandler(param.getExecutorHandler());
-        jobInfo.setExecutorParam(param.getExecutorParam());
+        jobInfo.setExecutorParam(param.getExecutorParam() != null ? param.getExecutorParam() : "");
         jobInfo.setExecutorRouteStrategy("CONSISTENT_HASH");
         jobInfo.setExecutorBlockStrategy("SERIAL_EXECUTION");
         jobInfo.setMisfireStrategy("DO_NOTHING");
         jobInfo.setExecutorTimeout(param.getExecutorTimeout());
         jobInfo.setExecutorFailRetryCount(param.getExecutorFailRetryCount());
-        jobInfo.setRemark(param.getRemark());
+        jobInfo.setRemark(param.getRemark() != null ? param.getRemark() : "");
         return jobInfo;
     }
 
