@@ -55,6 +55,11 @@
 					</div>
 					<div class="col-xs-2">
 						<div class="input-group">
+							<input type="text" class="form-control" id="jobCode" placeholder="${I18n.system_please_input}任务编码" >
+						</div>
+					</div>
+					<div class="col-xs-2">
+						<div class="input-group">
 							<input type="text" class="form-control" id="executorHandler" placeholder="${I18n.system_please_input}JobHandler" >
 						</div>
 					</div>
@@ -186,6 +191,10 @@
 								<div class="schedule_conf schedule_conf_FIX_DELAY" style="display: none" >
 									<label for="lastname" class="col-sm-2 control-label">${I18n.schedule_type_fix_delay}<font color="red">*</font></label>
 									<div class="col-sm-4"><input type="text" class="form-control" name="schedule_conf_FIX_DELAY" placeholder="${I18n.system_please_input} （ Second ）" maxlength="10" onkeyup="this.value=this.value.replace(/\D/g,'')" onafterpaste="this.value=this.value.replace(/\D/g,'')" ></div>
+								</div>
+								<div class="schedule_conf schedule_conf_ONCE" style="display: none" >
+									<label for="lastname" class="col-sm-2 control-label">${I18n.schedule_type_once}<font color="red">*</font></label>
+									<div class="col-sm-4"><input type="text" class="form-control" name="schedule_conf_ONCE" placeholder="yyyy-MM-dd HH:mm:ss" maxlength="19" ></div>
 								</div>
 							</div>
 
@@ -469,6 +478,10 @@ exit 0
 									<label for="lastname" class="col-sm-2 control-label">${I18n.schedule_type_fix_delay}<font color="red">*</font></label>
 									<div class="col-sm-4"><input type="text" class="form-control" name="schedule_conf_FIX_DELAY" placeholder="${I18n.system_please_input} （ Second ）" maxlength="10" onkeyup="this.value=this.value.replace(/\D/g,'')" onafterpaste="this.value=this.value.replace(/\D/g,'')" ></div>
 								</div>
+								<div class="schedule_conf schedule_conf_ONCE" style="display: none" >
+									<label for="lastname" class="col-sm-2 control-label">${I18n.schedule_type_once}<font color="red">*</font></label>
+									<div class="col-sm-4"><input type="text" class="form-control" name="schedule_conf_ONCE" placeholder="yyyy-MM-dd HH:mm:ss" maxlength="19" ></div>
+								</div>
 							</div>
 
 							<br>
@@ -707,6 +720,7 @@ exit 0
 				obj.jobGroup = $('#jobGroup').val();
 				obj.triggerStatus = $('#triggerStatus').val();
 				obj.jobDesc = $('#jobDesc').val();
+				obj.jobCode = $('#jobCode').val();
 				obj.executorHandler = $('#executorHandler').val();
 				obj.author = $('#author').val();
 				obj.offset = params.offset;
@@ -756,6 +770,19 @@ exit 0
 					width: '10',
 					widthUnit: '%',
 					align: 'left'
+				},{
+					title: '来源',
+					field: 'source',
+					width: '5',
+					widthUnit: '%',
+					align: 'center',
+					formatter: function(value, row, index) {
+						if (value == 1) {
+							return '<small class="label label-info">API</small>';
+						} else {
+							return '<small class="label label-default">后台</small>';
+						}
+					}
 				},{
 					title: I18n.jobinfo_field_remark,
 					field: 'remark',
@@ -1344,6 +1371,8 @@ exit 0
 					scheduleConf = $("#addModal .form input[name='schedule_conf_FIX_RATE']").val();
 				} else if (scheduleType == 'FIX_DELAY') {
 					scheduleConf = $("#addModal .form input[name='schedule_conf_FIX_DELAY']").val();
+				} else if (scheduleType == 'ONCE') {
+					scheduleConf = $("#addModal .form input[name='schedule_conf_ONCE']").val();
 				}
 				$("#addModal .form input[name='scheduleConf']").val( scheduleConf );
 
@@ -1481,6 +1510,8 @@ exit 0
 					$("#updateModal .form input[name='schedule_conf_FIX_RATE']").val( row.scheduleConf );
 				} else if (row.scheduleType == 'FIX_DELAY') {
 					$("#updateModal .form input[name='schedule_conf_FIX_DELAY']").val( row.scheduleConf );
+				} else if (row.scheduleType == 'ONCE') {
+					$("#updateModal .form input[name='schedule_conf_ONCE']").val( row.scheduleConf );
 				}
 
 				// 》init scheduleType
@@ -1554,6 +1585,8 @@ exit 0
 					scheduleConf = $("#updateModal .form input[name='schedule_conf_FIX_RATE']").val();
 				} else if (scheduleType == 'FIX_DELAY') {
 					scheduleConf = $("#updateModal .form input[name='schedule_conf_FIX_DELAY']").val();
+				} else if (scheduleType == 'ONCE') {
+					scheduleConf = $("#updateModal .form input[name='schedule_conf_ONCE']").val();
 				}
 				$("#updateModal .form input[name='scheduleConf']").val( scheduleConf );
 

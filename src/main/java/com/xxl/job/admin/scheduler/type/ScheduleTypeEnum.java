@@ -3,6 +3,7 @@ package com.xxl.job.admin.scheduler.type;
 import com.xxl.job.admin.scheduler.type.strategy.CronScheduleType;
 import com.xxl.job.admin.scheduler.type.strategy.FixRateScheduleType;
 import com.xxl.job.admin.scheduler.type.strategy.NoneScheduleType;
+import com.xxl.job.admin.scheduler.type.strategy.OnceScheduleType;
 import com.xxl.job.admin.util.I18nUtil;
 
 /**
@@ -21,6 +22,11 @@ public enum ScheduleTypeEnum {
      * schedule by fixed rate (in seconds)
      */
     FIX_RATE(I18nUtil.getString("schedule_type_fix_rate"), new FixRateScheduleType()),
+
+    /**
+     * schedule once at a specified future time point
+     */
+    ONCE(I18nUtil.getString("schedule_type_once"), new OnceScheduleType()),
 
     /**
      * schedule by fix delay (in seconds)， after the last time

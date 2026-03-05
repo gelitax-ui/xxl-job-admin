@@ -94,6 +94,7 @@ public class JobInfoController {
 													@RequestParam int jobGroup,
 													@RequestParam int triggerStatus,
 													@RequestParam String jobDesc,
+													@RequestParam(required = false, defaultValue = "") String jobCode,
 													@RequestParam String executorHandler,
 													@RequestParam String author) {
 
@@ -101,7 +102,7 @@ public class JobInfoController {
 		JobGroupPermissionUtil.validJobGroupPermission(request, jobGroup);
 
 		// page
-		return xxlJobService.pageList(offset, pagesize, jobGroup, triggerStatus, jobDesc, executorHandler, author);
+		return xxlJobService.pageList(offset, pagesize, jobGroup, triggerStatus, jobDesc, jobCode, executorHandler, author);
 	}
 	
 	@RequestMapping("/insert")
@@ -169,6 +170,11 @@ public class JobInfoController {
 		// get jobCode before delete
 		XxlJobInfo jobInfo = xxlJobInfoMapper.loadById(ids.get(0));
 		String jobCode = (jobInfo != null) ? jobInfo.getJobCode() : null;
+
+		// check source: API-created jobs cannot be deleted from UI
+		if (jobInfo != null && jobInfo.getSource() == 1) {
+			return Response.ofFail("该任务由API创建，不允许在后台管理页面删除");
+		}
 
 		// invoke
 		Response<LoginInfo> loginInfoResponse = XxlSsoHelper.loginCheckWithAttr(request);

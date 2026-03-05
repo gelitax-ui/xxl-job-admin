@@ -45,6 +45,7 @@ public class XxlJobInfo {
 
 	private String remark;
 
+	private int source;			// 创建来源：0=后台管理，1=API
 
 	public int getId() {
 		return id;
@@ -252,5 +253,13 @@ public class XxlJobInfo {
 
 	public void setRemark(String remark) {
 		this.remark = remark;
+	}
+
+	public int getSource() {
+		return source;
+	}
+
+	public void setSource(int source) {
+		this.source = source;
 	}
 }

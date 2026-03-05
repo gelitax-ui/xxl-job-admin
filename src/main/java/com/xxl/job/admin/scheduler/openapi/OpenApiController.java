@@ -2,6 +2,8 @@ package com.xxl.job.admin.scheduler.openapi;
 
 import com.xxl.job.admin.bean.CopyGroupAndJobParam;
 import com.xxl.job.admin.bean.DeleteGroupAndJobParam;
+import com.xxl.job.admin.bean.JobIdParam;
+import com.xxl.job.admin.bean.JobParam;
 import com.xxl.job.admin.scheduler.config.XxlJobAdminBootstrap;
 import com.xxl.job.admin.service.AdminBizExt;
 import com.xxl.job.core.constant.Const;
@@ -78,6 +80,22 @@ public class OpenApiController {
                 case "deleteGroupAndJob": {
                     DeleteGroupAndJobParam param = GsonTool.fromJson(requestBody, DeleteGroupAndJobParam.class);
                     return adminBiz.deleteGroupAndJob(param.getGroupAppName());
+                }
+                case "jobAdd": {
+                    JobParam jobParam = GsonTool.fromJson(requestBody, JobParam.class);
+                    return adminBiz.jobAdd(jobParam);
+                }
+                case "jobUpdate": {
+                    JobParam jobParam = GsonTool.fromJson(requestBody, JobParam.class);
+                    return adminBiz.jobUpdate(jobParam);
+                }
+                case "jobRemove": {
+                    JobIdParam param = GsonTool.fromJson(requestBody, JobIdParam.class);
+                    return adminBiz.jobRemove(param.getGroupAppName(), param.getJobCode());
+                }
+                case "jobQuery": {
+                    JobIdParam param = GsonTool.fromJson(requestBody, JobIdParam.class);
+                    return adminBiz.jobQuery(param.getGroupAppName(), param.getJobCode());
                 }
                 default:
                     return Response.ofFail("invalid request, uri-mapping("+ uri +") not found.");

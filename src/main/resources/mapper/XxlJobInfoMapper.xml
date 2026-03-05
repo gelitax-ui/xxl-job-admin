@@ -39,6 +39,7 @@
 		<result column="trigger_next_time" property="triggerNextTime" />
 
 		<result column="remark" property="remark" />
+		<result column="source" property="source" />
 	</resultMap>
 
 	<sql id="Base_Column_List">
@@ -67,7 +68,8 @@
 		t.trigger_status,
 		t.trigger_last_time,
 		t.trigger_next_time,
-		t.remark
+		t.remark,
+		t.source
 	</sql>
 
 	<select id="pageList" parameterType="java.util.HashMap" resultMap="XxlJobInfo">
@@ -82,6 +84,9 @@
             </if>
 			<if test="jobDesc != null and jobDesc != ''">
 				AND t.job_desc like CONCAT(CONCAT('%', #{jobDesc}), '%')
+			</if>
+			<if test="jobCode != null and jobCode != ''">
+				AND t.job_code like CONCAT(CONCAT('%', #{jobCode}), '%')
 			</if>
 			<if test="executorHandler != null and executorHandler != ''">
 				AND t.executor_handler like CONCAT(CONCAT('%', #{executorHandler}), '%')
@@ -106,6 +111,9 @@
             </if>
 			<if test="jobDesc != null and jobDesc != ''">
 				AND t.job_desc like CONCAT(CONCAT('%', #{jobDesc}), '%')
+			</if>
+			<if test="jobCode != null and jobCode != ''">
+				AND t.job_code like CONCAT(CONCAT('%', #{jobCode}), '%')
 			</if>
 			<if test="executorHandler != null and executorHandler != ''">
 				AND t.executor_handler like CONCAT(CONCAT('%', #{executorHandler}), '%')
@@ -142,7 +150,8 @@
 			trigger_status,
 			trigger_last_time,
 			trigger_next_time,
-			remark
+			remark,
+			source
 		) VALUES (
 			#{jobGroup},
 			#{jobCode},
@@ -168,7 +177,8 @@
 			#{triggerStatus},
 			#{triggerLastTime},
 			#{triggerNextTime},
-			#{remark}
+			#{remark},
+			#{source}
 		);
 		<!--<selectKey resultType="java.lang.Integer" order="AFTER" keyProperty="id">
 			SELECT LAST_INSERT_ID()

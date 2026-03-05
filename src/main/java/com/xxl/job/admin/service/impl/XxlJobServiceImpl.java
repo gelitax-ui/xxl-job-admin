@@ -51,11 +51,11 @@ public class XxlJobServiceImpl implements XxlJobService {
 	private XxlJobLogReportMapper xxlJobLogReportMapper;
 	
 	@Override
-	public Response<PageModel<XxlJobInfo>> pageList(int offset, int pagesize, int jobGroup, int triggerStatus, String jobDesc, String executorHandler, String author) {
+	public Response<PageModel<XxlJobInfo>> pageList(int offset, int pagesize, int jobGroup, int triggerStatus, String jobDesc, String jobCode, String executorHandler, String author) {
 
 		// page list
-		List<XxlJobInfo> list = xxlJobInfoMapper.pageList(offset, pagesize, jobGroup, triggerStatus, jobDesc, executorHandler, author);
-		int list_count = xxlJobInfoMapper.pageListCount(offset, pagesize, jobGroup, triggerStatus, jobDesc, executorHandler, author);
+		List<XxlJobInfo> list = xxlJobInfoMapper.pageList(offset, pagesize, jobGroup, triggerStatus, jobDesc, jobCode, executorHandler, author);
+		int list_count = xxlJobInfoMapper.pageListCount(offset, pagesize, jobGroup, triggerStatus, jobDesc, jobCode, executorHandler, author);
 
 		// package result
 		PageModel<XxlJobInfo> pageModel = new PageModel<>();
@@ -112,6 +112,18 @@ public class XxlJobServiceImpl implements XxlJobService {
 				}
 			} catch (Exception e) {
 				return Response.ofFail ( (I18nUtil.getString("schedule_type")+I18nUtil.getString("system_unvalid")) );
+			}
+		} else if (scheduleTypeEnum == ScheduleTypeEnum.ONCE) {
+			if (StringTool.isBlank(jobInfo.getScheduleConf())) {
+				return Response.ofFail("请输入执行时间");
+			}
+			try {
+				Date onceTime = DateTool.parseDateTime(jobInfo.getScheduleConf());
+				if (onceTime == null) {
+					return Response.ofFail("执行时间格式无效，请使用 yyyy-MM-dd HH:mm:ss");
+				}
+			} catch (Exception e) {
+				return Response.ofFail("执行时间格式无效，请使用 yyyy-MM-dd HH:mm:ss");
 			}
 		}
 
@@ -230,6 +242,18 @@ public class XxlJobServiceImpl implements XxlJobService {
 				}
 			} catch (Exception e) {
 				return Response.ofFail ( (I18nUtil.getString("schedule_type")+I18nUtil.getString("system_unvalid")) );
+			}
+		} else if (scheduleTypeEnum == ScheduleTypeEnum.ONCE) {
+			if (StringTool.isBlank(jobInfo.getScheduleConf())) {
+				return Response.ofFail("请输入执行时间");
+			}
+			try {
+				Date onceTime = DateTool.parseDateTime(jobInfo.getScheduleConf());
+				if (onceTime == null) {
+					return Response.ofFail("执行时间格式无效，请使用 yyyy-MM-dd HH:mm:ss");
+				}
+			} catch (Exception e) {
+				return Response.ofFail("执行时间格式无效，请使用 yyyy-MM-dd HH:mm:ss");
 			}
 		}
 

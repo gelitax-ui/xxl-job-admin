@@ -19,6 +19,7 @@ public interface XxlJobInfoMapper {
 									 @Param("jobGroup") int jobGroup,
 									 @Param("triggerStatus") int triggerStatus,
 									 @Param("jobDesc") String jobDesc,
+									 @Param("jobCode") String jobCode,
 									 @Param("executorHandler") String executorHandler,
 									 @Param("author") String author);
 	public int pageListCount(@Param("offset") int offset,
@@ -26,6 +27,7 @@ public interface XxlJobInfoMapper {
 							 @Param("jobGroup") int jobGroup,
 							 @Param("triggerStatus") int triggerStatus,
 							 @Param("jobDesc") String jobDesc,
+							 @Param("jobCode") String jobCode,
 							 @Param("executorHandler") String executorHandler,
 							 @Param("author") String author);
 	
