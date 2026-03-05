@@ -144,6 +144,20 @@ public class XxlJobClient {
         return postApi("jobQuery", body, String.class);
     }
 
+    /**
+     * 重置任务触发时间
+     *
+     * @param jobCode     任务编码
+     * @param triggerTime 新的执行时间
+     */
+    public Response<String> resetTriggerTime(String jobCode, Date triggerTime) {
+        Map<String, Object> body = new LinkedHashMap<>();
+        body.put("groupAppName", groupAppName);
+        body.put("jobCode", jobCode);
+        body.put("triggerTime", formatDate(triggerTime));
+        return postApi("jobResetTriggerTime", body, String.class);
+    }
+
     // -------------------- internal --------------------
 
     private Map<String, Object> buildJobBody(String jobCode, Date triggerTime, String executorHandler, Map<String, Object> executorParam, Map<String, Object> options) {

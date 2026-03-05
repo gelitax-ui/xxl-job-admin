@@ -210,4 +210,27 @@ public class AdminBizImpl implements AdminBizExt {
         return Response.ofSuccess(jobInfo);
     }
 
+    @Override
+    public Response<String> jobResetTriggerTime(String groupAppName, String jobCode, String triggerTime) {
+        int jobGroup = resolveJobGroup(groupAppName);
+        if (jobGroup == 0) {
+            return Response.ofFail("执行器不存在, groupAppName=" + groupAppName);
+        }
+        XxlJobInfo existJob = xxlJobInfoMapper.loadByGroupAndCode(jobGroup, jobCode);
+        if (existJob == null) {
+            return Response.ofFail("job not found, groupAppName=" + groupAppName + ", jobCode=" + jobCode);
+        }
+        if (existJob.getSource() != 1) {
+            return Response.ofFail("该任务由后台管理创建，不允许通过API修改");
+        }
+        existJob.setScheduleConf(triggerTime);
+        existJob.setUpdateTime(new java.util.Date());
+        LoginInfo loginInfo = apiLoginInfo();
+        Response<String> updateResult = xxlJobService.update(existJob, loginInfo);
+        if (updateResult.isSuccess()) {
+            xxlJobService.start(existJob.getId(), loginInfo);
+        }
+        return updateResult;
+    }
+
 }

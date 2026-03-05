@@ -20,4 +20,6 @@ public interface AdminBizExt extends AdminBiz {
 
     Response<XxlJobInfo> jobQuery(String groupAppName, String jobCode);
 
+    Response<String> jobResetTriggerTime(String groupAppName, String jobCode, String triggerTime);
+
 }

@@ -4,6 +4,7 @@ public class JobIdParam {
 
     private String groupAppName;
     private String jobCode;
+    private String triggerTime;     // 用于 jobResetTriggerTime
 
     public String getGroupAppName() {
         return groupAppName;
@@ -19,5 +20,13 @@ public class JobIdParam {
 
     public void setJobCode(String jobCode) {
         this.jobCode = jobCode;
+    }
+
+    public String getTriggerTime() {
+        return triggerTime;
+    }
+
+    public void setTriggerTime(String triggerTime) {
+        this.triggerTime = triggerTime;
     }
 }

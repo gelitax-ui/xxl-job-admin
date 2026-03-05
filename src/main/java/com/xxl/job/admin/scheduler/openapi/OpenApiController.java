@@ -97,6 +97,10 @@ public class OpenApiController {
                     JobIdParam param = GsonTool.fromJson(requestBody, JobIdParam.class);
                     return adminBiz.jobQuery(param.getGroupAppName(), param.getJobCode());
                 }
+                case "jobResetTriggerTime": {
+                    JobIdParam param = GsonTool.fromJson(requestBody, JobIdParam.class);
+                    return adminBiz.jobResetTriggerTime(param.getGroupAppName(), param.getJobCode(), param.getTriggerTime());
+                }
                 default:
                     return Response.ofFail("invalid request, uri-mapping("+ uri +") not found.");
             }
